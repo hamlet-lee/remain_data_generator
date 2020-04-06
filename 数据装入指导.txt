@@ -1,0 +1,34 @@
+# 解压
+unzip remain_data.zip
+
+# 上传到 HDFS
+hadoop fs -mkdir /tmp/remain_data
+hadoop fs -copyFromLocal remain_data.txt /tmp/remain_data
+
+# 建立 HIVE 表格
+create database if not exists temp;
+create table if not exists temp.ods_remain_data (raw string )
+  STORED AS TEXTFILE;
+
+# 装入数据
+load data inpath '/tmp/remain_data' overwrite into table temp.ods_remain_data;
+
+# 确认数据装入成功
+select * from temp.ods_remain_data limit 10;
+
+0: jdbc:hive2://hd020:2185,hd035:2185,hd036:2> select * from temp.ods_remain_data limit 10;
++----------------------------------------------------+
+|                ods_remain_data.raw                 |
++----------------------------------------------------+
+| 20200111_034932       EVENT   ver=1.0.0       event_id=event_a        userid=user0    a_val=2854      vendor=vendor15 |
+| 20200111_034937       EVENT   ver=1.0.0       a_val=1095      userid=user0    event_id=event_a        vendor=vendor15 |
+| 20200115_150527       EVENT   ver=1.0.0       b_val=320       userid=user0    event_id=event_b        vendor=vendor15 |
+| 20200115_150531       EVENT   ver=1.0.0       nps=8   userid=user0    event_id=score_nps      vendor=vendor15 |
+| 20200115_150540       EVENT   ver=1.0.0       event_id=event_a        userid=user0    a_val=223       vendor=vendor15 |
+| 20200123_000533       EVENT   ver=1.0.0       event_id=score_nps      userid=user0    nps=9   vendor=vendor15 |
+| 20200123_000541       EVENT   ver=1.0.0       event_id=event_b        userid=user0    b_val=635       vendor=vendor15 |
+| 20200130_141908       EVENT   ver=1.0.0       b_val=198       userid=user0    event_id=event_b        vendor=vendor15 |
+| 20200201_100124       EVENT   ver=1.0.0       event_id=event_b        userid=user0    b_val=62        vendor=vendor15 |
+| 20200201_100128       EVENT   ver=1.0.0       a_val=7207      event_id=event_a        vendor=vendor15 userid=user0 |
++----------------------------------------------------+
+10 rows selected (1.793 seconds)

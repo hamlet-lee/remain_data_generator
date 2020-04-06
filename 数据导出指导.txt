@@ -1,0 +1,29 @@
+1. 找到HIVE表格在HDFS上的路径（注意看输出的 LOCATION )
+show create table temp.app_vendor_stat;
+
++----------------------------------------------------+
+|                   createtab_stmt                   |
++----------------------------------------------------+
+| CREATE TABLE `temp.app_vendor_stat`(               |
+|   `day` string,                                    |
+|   `vendor` string,                                 |
+|   `new_user` bigint,                               |
+|   `remain30_user` bigint,                          |
+|   `remain30_user_ratio_per` double)                |
+| ROW FORMAT SERDE                                   |
+|   'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'  |
+| STORED AS INPUTFORMAT                              |
+|   'org.apache.hadoop.mapred.TextInputFormat'       |
+| OUTPUTFORMAT                                       |
+|   'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat' |
+| LOCATION                                           |
+|   'hdfs://namenode:8020/user/hive/warehouse/temp.db/app_vendor_stat' |
+| TBLPROPERTIES (                                    |
+|   'transient_lastDdlTime'='1586174512')            |
++----------------------------------------------------+
+
+
+
+2. 导出对应表格到本地文件系统（注意sed将SOH替换成了TAB)
+hadoop fs -text /user/hive/warehouse/temp.db/app_vendor_stat/* |  sed  's/\x01/\t/g' > app_vendor_stat.txt
+

@@ -35,12 +35,19 @@ public class App {
             // 来的时间
             long cPos = Math.abs(random.nextLong() % (maxDt.getMillis() - minDt.getMillis()));
             DateTime comeDt = new DateTime(minDt.getMillis() + cPos);
-            long gPos = Math.abs(random.nextLong() % (maxDt.getMillis() - minDt.getMillis()));
+
+            // 最长生命周期，1个月 * vendor系数
+            int vendorId = genIntWithProbs(vendorProbs, random);
+            long maxForUser = (long)(30.0f * 1000 * 60 * 60 * 24 * vendorLifeRatio[vendorId]);
+
+            long gPos = Math.abs(random.nextLong() % maxForUser);
             DateTime goneDt = new DateTime(comeDt.getMillis() + gPos);
+
             // 用了多少天
             DateTime curDt = new DateTime(comeDt);
+
             // 渠道
-            vendor = "vendor" + random.nextInt(100);
+            vendor = "vendor" + vendorId;
 
             // 开始的版本
             if(curDt.compareTo(ver1_0_1_Dt) <= 0) {
@@ -111,6 +118,12 @@ public class App {
         static float[] newVerProbs = {
                 0.01f, 0.01f, 0.01f, 0.01f, 0.01f,
                 0.02f, 0.02f, 0.02f, 0.30f, 0.59f };
+        static float[] vendorProbs = {
+                0.21f, 0.31f, 0.11f, 0.11f, 0.26f
+        };
+        static float[] vendorLifeRatio = {
+                2.1f, 1.6f, 1.3f, 1.9f, 1.5f
+        };
         private int genNps() {
             if(curVersion.equals("1.0.0")) {
                 return genIntWithProbs(oldVerProbs, random);
@@ -149,7 +162,7 @@ public class App {
                     + key + "=" + val + "\t"
                     + "userid=user" + userId + "\tevent_id=" + eventId + "\tvendor=" + vendor);
         }
-        psTsv.println(outFormatterTsv.print(curDt) + "\t" + vendor + "\t" + userId);
+        psTsv.print(outFormatterTsv.print(curDt) + "\t" + vendor + "\t" + userId + "\n");
     }
 
     static PrintStream ps = null;

@@ -24,6 +24,7 @@ show create table temp.app_vendor_stat;
 
 
 
-2. 导出对应表格到本地文件系统（注意sed将SOH替换成了TAB)
-hadoop fs -text /user/hive/warehouse/temp.db/app_vendor_stat/* |  sed  's/\x01/\t/g' > app_vendor_stat.txt
+2. 导出对应表格到本地文件系统（注意sed将SOH替换成了TAB，将 "\N" 替换成了 "NULL")
+hadoop fs -text /user/hive/warehouse/temp.db/app_vendor_stat/* |  sed  's/\x01/\t/g' | sed 's/\\N/NULL/g' > app_vendor_stat.txt
+
 

@@ -16,7 +16,6 @@ load data inpath '/tmp/remain_data' overwrite into table temp.ods_remain_data;
 # 确认数据装入成功
 select * from temp.ods_remain_data limit 10;
 
-0: jdbc:hive2://hd020:2185,hd035:2185,hd036:2> select * from temp.ods_remain_data limit 10;
 +----------------------------------------------------+
 |                ods_remain_data.raw                 |
 +----------------------------------------------------+
